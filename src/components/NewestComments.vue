@@ -25,9 +25,15 @@
 </template>
 
 <script>
-import { fromNowFilter } from './../utils/mixins'
+import { fromNowFilter } from '../utils/mixins'
 
 export default {
-  mixins: [fromNowFilter],
+    mixins: [ fromNowFilter ],
+    props: {
+        comments: {
+            type: Array,
+            required: true
+        }
+    }
 }
 </script>
