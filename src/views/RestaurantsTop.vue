@@ -14,12 +14,13 @@
       v-for="restaurant in restaurants"
       :key="restaurant.id">
         <div class="col-md-4">
-          <a href="#">
+          <router-link 
+          :to="{ name: 'restaurant', params: { id: restaurant.id }}">
             <img
               class="card-img"
               :src="restaurant.image"
             >
-          </a>
+          </router-link>
         </div>
         <div class="col-md-8">
           <div class="card-body">
