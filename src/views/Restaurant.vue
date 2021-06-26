@@ -7,12 +7,16 @@
     <RestaurantComments :restaurant-comments="restaurantComments"
     @after-delete-comment="afterDeleteComment"/>
     <!-- 新增評論 CreateComment -->
+    <CreateComment 
+    :restaurant-id="restaurant.id"
+    @after-create-comment="afterCreateComment"/>
   </div>
 </template>
 
 <script>
 import RestaurantDetail from './../components/RestaurantDetail.vue'
 import RestaurantComments from './../components/RestaurantComments.vue'
+import CreateComment from './../components/CreateComment.vue'
 
 const dummyData = {
     "restaurant": {
@@ -195,11 +199,21 @@ const dummyData = {
     "isFavorited": false,
     "isLiked": true
 }
-
+const dummyUser = {
+  currentUser: {
+    id: 1,
+    name: '管理者',
+    email: 'root@example.com',
+    image: 'https://i.pravatar.cc/300',
+    isAdmin: true
+  },
+  isAuthenticated: true
+}
 export default {
     components: {
         RestaurantDetail,
-        RestaurantComments
+        RestaurantComments,
+        CreateComment
     },
     data () {
     return {
@@ -215,38 +229,52 @@ export default {
         isFavorited: false,
         isLiked: false
       },
+      currentUser: dummyUser.currentUser,
       restaurantComments: []
     }
-  },
-  created () {
-    const { id: restaurantId } = this.$route.params
-    this.fetchRestaurant(restaurantId)
-  },
-  methods: {
-    fetchRestaurant (restaurantId) {
-      console.log('fetchRestaurant id: ', restaurantId)
-
-      this.restaurant = {
-        id: dummyData.restaurant.id,
-        name: dummyData.restaurant.name,
-        categoryName: dummyData.restaurant.Category.name,
-        image: dummyData.restaurant.image,
-        openingHours: dummyData.restaurant.opening_hours,
-        tel: dummyData.restaurant.tel,
-        address: dummyData.restaurant.address,
-        description: dummyData.restaurant.description,
-        isFavorited: dummyData.isFavorited,
-        isLiked: dummyData.isLiked,
-      }
-
-      this.restaurantComments = dummyData.restaurant.Comments
     },
-    afterDeleteComment (commentId) {
-      // 以 filter 保留未被選擇的 comment.id
-      this.restaurantComments = this.restaurantComments.filter(
-        comment => comment.id !== commentId
-      )
+    created () {
+      const { id: restaurantId } = this.$route.params
+      this.fetchRestaurant(restaurantId)
+    },
+    methods: {
+      fetchRestaurant (restaurantId) {
+        console.log('fetchRestaurant id: ', restaurantId)
+
+        this.restaurant = {
+          id: dummyData.restaurant.id,
+          name: dummyData.restaurant.name,
+          categoryName: dummyData.restaurant.Category.name,
+          image: dummyData.restaurant.image,
+          openingHours: dummyData.restaurant.opening_hours,
+          tel: dummyData.restaurant.tel,
+          address: dummyData.restaurant.address,
+          description: dummyData.restaurant.description,
+          isFavorited: dummyData.isFavorited,
+          isLiked: dummyData.isLiked,
+        }
+
+        this.restaurantComments = dummyData.restaurant.Comments
+      },
+      afterDeleteComment (commentId) {
+        // 以 filter 保留未被選擇的 comment.id
+        this.restaurantComments = this.restaurantComments.filter(
+          comment => comment.id !== commentId
+        )
+      },
+      afterCreateComment (payload) {
+        const { commentId, restaurantId, text } = payload
+        this.restaurantComments.push({
+          id: commentId,
+          RestaurantId: restaurantId,
+          User: {
+            id: this.currentUser.id,
+            name: this.currentUser.name
+          },
+          text,
+          createdAt: new Date()
+        })
+      }
     }
-  }
 }
 </script>
