@@ -22,7 +22,7 @@
           </ul>
           <p>
             <router-link 
-              :to="{ name: 'users-edit', params: { id: user.id } } "
+              :to="{ name: 'user-edit', params: { id: user.id } }"
               v-if="user.isAdmin"
             >
               <button 
@@ -52,7 +52,10 @@
 </template>
 
 <script>
+import { emptyImageFilter } from './../utils/mixins'
+
 export default {
+  mixins: [emptyImageFilter],
   name: 'UserProfileCard',
   props: {
     user: {

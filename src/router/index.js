@@ -5,7 +5,6 @@ import SignIn from '../views/SignIn.vue'
 import Restaurants from '../views/Restaurants'
 
 Vue.use(VueRouter)
-
 const routes = [
   {
     path: '/',
@@ -53,9 +52,44 @@ const routes = [
     component: () => import('../views/UsersTop.vue')
   },
   {
+    path: '/users/top/:id/edit',
+    name: 'user-edit',
+    component: () => import('../views/UserEdit.vue')
+  },
+  {
     path: '/users/top/:id',
     name: 'users',
     component: () => import('../views/User.vue')
+  },
+  {
+    path: '/admin',
+    exact: true,
+    redirect: '/admin/restaurants'
+  },
+  {
+    path: '/admin/restaurants',
+    name: 'admin-restaurants',
+    component: () => import('../views/AdminRestaurants.vue')
+  },
+  {
+    path: '/admin/restaurants/new',
+    name: 'admin-restaurant-new',
+    component: () => import('../views/AdminRestaurantNew.vue')
+  },
+  {
+    path: '/admin/restaurants/:id/edit',
+    name: 'admin-restaurant-edit',
+    component: () => import('../views/AdminRestaurantEdit.vue'),
+  },
+  {
+    path: '/admin/restaurants/:id',
+    name: 'admin-restaurant',
+    component: () => import('../views/AdminRestaurant.vue')
+  },
+  {
+    path: '/admin/categories',
+    name: 'admin-categories',
+    component: () => import('../views/AdminCategories.vue')
   },
   {
     path: '*',

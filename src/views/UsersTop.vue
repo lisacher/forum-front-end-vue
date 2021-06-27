@@ -44,6 +44,7 @@
 <script>
 /* eslint-disable */
 import NavTabs from './../components/NavTabs.vue'
+import { emptyImageFilter } from './../utils/mixins'
 
 const dummyUsers = {
     "users": [
@@ -257,6 +258,7 @@ const dummyUsers = {
 }
 
 export default {
+  mixins: [emptyImageFilter],
   components: {
       NavTabs
   },
