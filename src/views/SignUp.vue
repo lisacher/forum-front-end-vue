@@ -87,6 +87,9 @@
 </template>
 
 <script>
+import authorizationAPI from './../apis/authorization'
+import { Toast } from './../utils/helpers'
+
 export default {
     data () {
         return {
@@ -98,15 +101,49 @@ export default {
         }
     },
     methods: {
-        handleSubmit () {
-            const data = JSON.stringify({
-            name: this.name,
-            email: this.email,
-            password: this.password,
-            passwordCheck: this.passwordCheck
-        })
-        console.log('data', data)
-        }
+        async handleSubmit () {
+          try{
+            if (!this.email || !this.password || !this.name || !this.passwordCheck) {
+              Toast.fire({
+                icon: 'warning',
+                title: '請填入 name、email 和 password'
+              })
+              return
+            }
+            if ( this.password !== this.passwordCheck ) {
+              Toast.fire({
+                icon: 'warning',
+                title: '請輸入相同的密碼'
+              })
+              return
+            }
+
+            const { data } = await authorizationAPI.signUp({
+              name: this.name,
+              email: this.email,
+              password: this.password,
+              passwordCheck: this.passwordCheck
+            })
+
+            if (data.status !== 'success') {
+              throw new Error(data.message)
+            }
+            Toast.fire({
+              icon: 'success',
+              title: '加入成功！'
+            })
+
+            this.$router.push('/signin')
+          }
+          catch (error) {
+            console.log('error', error)
+            Toast.fire({
+              icon: 'error',
+              title: '無法加入會員，請稍後再試'
+            })
+          }
+      
     }
+  }
 }
 </script>
