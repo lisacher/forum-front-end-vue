@@ -17,6 +17,7 @@
       >回上一頁</button>
       <button
         type="submit"
+        :is-processing="isProcessing"
         class="btn btn-primary mr-0"
       >
         Submit
@@ -27,7 +28,8 @@
 
 <script>
 
-import { v4 as uuidv4 } from "uuid"
+import commentsAPI from './../apis/comments'
+import { Toast } from '../utils/helpers'
 
 export default {
   props: {
@@ -38,19 +40,47 @@ export default {
   },
   data () {
     return {
-      text: ''
+      text: '',
+      isProcessing: false
     }
   },
   methods: {
-    handleSubmit () {
-      // TODO: 向 API 發送 POST 請求
-      // 伺服器新增 Comment 成功後...
-      this.$emit('after-create-comment', {
-        commentId: uuidv4(), // 尚未串接 API 暫時使用隨機的 id
-        restaurantId: this.restaurantId,
-        text: this.text
-      })
-      this.text = '' // 將表單內的資料清空
+    async handleSubmit () {
+      try {
+        this.isProcessing= true
+        const { data } = await commentsAPI.create({restaurantId: this.restaurantId, text: this.text})
+          
+          if (!this.text) {
+          Toast.fire({
+            icon: 'warning',
+            title: '請填寫評論內容'
+          })
+          return
+        }
+
+          if (data.status === 'error') {
+            throw new Error(data.message)
+          }
+
+        this.$emit('after-create-comment', {
+          commentId: data.commentId,
+          restaurantId: this.restaurantId,
+          text: this.text
+        })
+        Toast.fire ({
+          icon: 'success',
+          title: '評論成功！'
+        })
+        this.isProcessing = false
+        this.text = '' // 將表單內的資料清空
+      }
+      catch (error) {
+        console.error(error.message)
+        Toast.fire ({
+          icon: 'error',
+          title: '無法新增評論，請稍後再試'
+        })
+      }
     }
   }
 }
